@@ -5,4 +5,4 @@ Is a simple website which allows users download reviews from Amazon marketplace,
 
 **ReviewDownloader** sub-directory holds a .NET web application which employs the **ReviewCurator** library and essentially exposes the power of the library via a simple UI. 
 
-You can find a [live demo of the project here](http://reviewdownloader.somee.com)
+Hey, you can find a <a href="http://reviewdownloader.somee.com" target="_blank">live demo of the project here.</a>
