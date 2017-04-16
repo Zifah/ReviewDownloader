@@ -1,4 +1,4 @@
-# ReviewDownloader
+# The Review Downloader
 Simple website that downloads reviews from Amazon marketplace, Google Play store and Apple app store
 
 The ReviewCurator sub-directory holds a .NET class-library which contains all the logic for pulling reviews from Amazon marketplace, Google Play store and Apple app store
