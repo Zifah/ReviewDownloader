@@ -1,0 +1,202 @@
+﻿File name:	index.html	Save
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Review Downloader</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/sb-admin.css" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!-- Angular Block UI -->
+    <link rel="stylesheet" href="js/plugins/bower_components/angular-block-ui/dist/angular-block-ui.min.css" />
+    <!-- Angular Toast -->
+    <link rel="stylesheet" href="js/plugins/bower_components/ngToast/dist/ngToast.min.css" />
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body ng-app="ReviewCuratorApp" ng-cloak>
+    <toast></toast>
+    <div id="wrapper">
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Review Downloader</a>
+            </div>
+            <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav side-nav">
+                    <li>
+                        <a href=""><i class="fa fa-fw fa-dashboard"></i>Home</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </nav>
+        <div id="page-wrapper" ng-controller="ReviewCuratorController">
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            <a href="" style="text-decoration: none !important" ng-click="reload()">The Review Downloader</a>
+                        </h1>
+                        <ol class="breadcrumb">
+                            <li>
+                                <i class="fa fa-dashboard"></i>  <a href="">Review Downloader</a>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <!-- /.row -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="alert alert-info alert-dismissable" data-ng-show="!hideAlert">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <p>
+                                <i class="fa fa-info-circle"></i>
+                                Download the latest reviews from Amazon MarketPlace, Google Play Store, and Apple App Store
+                            </p>
+                            <br />
+                            <p>
+                                <h4>How to use this tool</h4>
+                                <ul>
+                                    <li>Enter the URL to the product/app page, then your email and press enter to begin.</li>
+                                    <li>The download information will be sent to your email if we can't get the reviews within the next ten seconds</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+                <div class="row" ng-show="done">
+                    <div class="col-lg-12">
+                        <div ng-show="reviewsFileUrl" class="alert alert-success alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <p>
+                                <i class="fa fa-info-circle"></i>
+                                Yee haa! <a href="{{reviewsFileUrl}}" target="_blank">Click here to download your freshly-minted {{reviewSource}} reviews</a>
+                            </p>
+                        </div>
+                        <div ng-show="!reviewsFileUrl" class="alert alert-warning alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <p>
+                                <i class="fa fa-info-circle"></i>
+                                We are busy downloading your {{reviewSource}} reviews. Once done, we shall send you an email with download information.
+                                Engage with <a href="#divLatestReviews">the latest reviews</a> while you wait for the download to complete.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+                <div class="row">
+                    <div class="col-lg-6">
+                        <form role="form" name="form">
+                            <div class="form-group">
+                                <label>URL</label>
+                                <input class="form-control" ng-model="url" type="url" required>
+                                <p class="help-block">Example: https://play.google.com/store/apps/details?id=com.eero.android</p>
+                            </div>
+                            <div class="form-group">
+                                <label>Number (enter up to 10000)</label>
+                                <input class="form-control" placeholder="1 - 10000" type="number" min="1" max="10000" maxlength="10000" ng-model="count" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email (optional)</label>
+                                <input class="form-control" type="email" ng-model="email">
+                                <p class="help-block">If the download takes too long, we will inform you and send you an email upon completion</p>
+                            </div>
+                            <button ng-disabled="!form.$valid" type="submit" ng-click="hideAlert = true; getReviews();" class="btn btn-primary">Download</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+            <div class="container">
+                <!-- /.row -->
+                <div class="row" ng-if="latestReviews" id="divLatestReviews">
+                    <div class="col-lg-12 text-left">
+                        <h4>Latest reviews</h4>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table id="tblLatestReviews" class="table table-bordered table-hover table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Username
+                                            </th>
+                                            <th>
+                                                Date
+                                            </th>
+                                            <th>
+                                                Title
+                                            </th>
+                                            <th>
+                                                Comment
+                                            </th>
+                                            <th>
+                                                Rating
+                                            </th>
+                                            <th>
+                                                Link
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="row in latestReviews">
+                                            <td>{{row.username}}</td>
+                                            <td>{{row.date|date:'medium'}}</td>
+                                            <td>{{row.title}}</td>
+                                            <td>{{row.review}}</td>
+                                            <td>{{row.rating}}</td>
+                                            <td>{{row.link}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="footer">
+                <div class="panel panel-default text-center">
+                    <div class="panel-body">
+                        This Review Downloader was built with love by <a href="http://www.hafiz.com.ng/" target="_blank">Hafiz Adewuyi</a>
+                        <i class="fa fa-heart"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Angular JS -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+    <script src="js/plugins/bower_components/angular-block-ui/dist/angular-block-ui.min.js"></script>
+    <script src="js/plugins/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+    <script src="js/plugins/bower_components/ngToast/dist/ngToast.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
